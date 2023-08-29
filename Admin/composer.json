@@ -1,0 +1,5 @@
+{
+    "name": "g3/votesystem",
+    "require": {"phpoffice/phpspreadsheet": "^1.17"}
+
+}
