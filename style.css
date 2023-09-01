@@ -169,21 +169,35 @@ i{
 	color: #4b090a;
 	margin-bottom: 5px;
 }
-
-@media screen and (max-width: 960px){
-    .container{
-        transform: scale(0.8);
-    }
-}
-
 @media screen and (max-width: 768px){
     .container{
-        transform: scale(0.7);
+        max-width:90%;
+        margin:auto;
+    }
+}
+@media screen and (max-width: 580px){
+    .container{
+        max-width: 80%;
+        margin: auto;
+    }
+    .container .box{
+        height: 600px;
+        padding-top: 40px;
+        justify-content: center;
+    }
+    small{
+        font-size: 14px;
     }
 }
 
-@media screen and (max-width: 500px){
+@media screen and (max-width: 412px){
     .container{
-        transform: scale(0.5);
+        max-width: 80%;
+        margin: auto;
+    }
+    .container .box{
+        justify-content: center;
+        height: 500px;
+        padding-top: 20px;
     }
 }

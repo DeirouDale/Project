@@ -101,6 +101,7 @@ body{
 	box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
 	margin-right: 15px;
 	margin-top: 15px;
+	padding: 10px;
 }
 .main .contents .candidate .info{
 	display: block;
@@ -177,7 +178,6 @@ body{
 .radio-container{
 	position: relative;
 	height: 100%;
-	padding: 6px 6px;
 }
 .radio-container input{
 	position: absolute;
@@ -393,4 +393,91 @@ input:checked + .radio-title label{
 }
 .pop-up span{
 	color: #4b090a;
+}
+
+@media screen and (max-width: 580px){
+	.main h2{
+		font-size: 30px;
+		padding-bottom: 20px;
+	}
+	.main .contents .candidate img {
+		width: 150px;
+		height: 150px;
+	}
+	.main .contents .candidate {
+		width: 610px;
+		min-height: 200px;
+		box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+		margin-right: 15px;
+		margin-top: 15px;
+		padding: 10px;
+	}
+	.main .contents .candidate .info li {
+		font-size: 14px;
+	}
+	.info-con .button-vote {
+		width: 100px;
+		margin-top: 10px;
+	}
+	.radio-container .radio-title {
+		height: 100%;
+		width: 100%;
+		border: 2px solid #0a4903;
+		border-radius: 4px;
+		padding: 3px 3px;
+	}
+	.radio-container {
+		position: relative;
+		height: 100%;
+		width: 60px;
+	}
+	.radio-container label {
+		color: #0a4903;
+		font-size: 16px;
+		font-family: montserrat;
+		font-weight: bold;
+	}
+}
+
+
+@media screen and (max-width: 414px){
+	.main h2{
+		font-size: 25px;
+	}
+	.main .contents{
+		justify-content: center;
+	}
+	.main .contents .candidate {
+		flex-direction: column;
+		width: 300px;
+		min-height: 200px;
+		box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+		margin-right: 15px;
+		margin-top: 15px;
+		padding: 20px;
+	}
+	.main .contents .candidate img {
+		width: 200px;
+		height: 200px;
+		border-radius: 10px;
+	}
+	.info-con .button-vote {
+		width: 100px;
+		margin-top: 10px;
+	}
+	.info-con{
+		margin-top: 10px;
+		width:70%;
+	}
+	.header nav img{
+		width: 40px;
+		height: 40px;
+		margin-right: 5px;
+	}
+	.Navigation .header span {
+		font-size: 20px;
+	}
+	.log-out{
+		margin-top: 25px;
+	}
 }
