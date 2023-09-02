@@ -442,7 +442,7 @@ input:checked + .radio-title label{
 
 @media screen and (max-width: 414px){
 	.main h2{
-		font-size: 25px;
+		font-size: 20px;
 	}
 	.main .contents{
 		justify-content: center;
@@ -479,5 +479,27 @@ input:checked + .radio-title label{
 	}
 	.log-out{
 		margin-top: 25px;
+	}
+	.confirm-form {
+		min-height: 350px;
+		width: 300px;
+		left: 10%;
+	}s
+	.confirm-form form .form span, .confirm-form form .form b {
+		font-size: 14px;
+	}
+	.confirm-form form .form span, .confirm-form form .form span {
+		font-size: 14px;
+	}
+	.confirm-form form {
+		padding-right: 20px;
+		padding-left: 20px;
+	}
+	.confirm-btn {
+		position: absolute;
+		bottom: -70px;
+	}
+	.confirm-btn button{
+		margin-bottom: 20px;
 	}
 }
