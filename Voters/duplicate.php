@@ -11,7 +11,7 @@
 			<nav>
 				<img class= "logo-img" src = "../Img/COE.png" width=60px height=60px>
 			<div class = "btn_log-out">
-				<a href="../Log in/logout.php" class = "log-out">Log out</a>
+				<a href="../User/logout.php" class = "log-out">Log out</a>
 			</div>
 			</nav>
 		</div>

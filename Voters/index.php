@@ -2,7 +2,7 @@
     session_start();
 
     include("../connection.php");
-    include("../Log in/functions.php");
+    include("../User/functions.php");
 
     $user_data = check_login($conn);
 
@@ -63,7 +63,7 @@
                 <img class= "logo-img" src = "<?php echo $logo;?>" width=60px height=60px>
 				<span><?php echo $student_number; ?></span>
 			<div class = "btn_log-out">
-				<a href="../Log in/logout.php" class = "log-out">Log out</a>
+				<a href="../User/logout.php" class = "log-out">Log out</a>
 			</div>
 			</nav>
 		</div>
