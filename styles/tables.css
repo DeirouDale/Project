@@ -1,0 +1,28 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid var(--dark-grey);
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background: var(--blue);
+    color: white;
+}
+
+table td {
+    background: var(--light);
+}
+
+table tr:nth-child(even) td {
+    background: var(--light-yellow);
+}
+
+table tr:hover td {
+    background: var(--light-blue);
+}

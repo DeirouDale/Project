@@ -1,0 +1,177 @@
+#content nav {
+    height: 56px;
+    background: #0AB50Cff;
+    padding: 0 24px;    
+    display: flex;
+    align-items: center;
+    grid-gap: 24px;
+    font-family: var(--lato);
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+#content nav::before {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    bottom: -40px;
+    left: 0;
+    border-radius: 50%;
+    box-shadow: -20px -20px 0 #0AB50Cff;
+}
+
+#content nav .bx.bx-menu {
+    cursor: pointer;
+    color: #0d3c5c;
+}
+
+#content nav .bx.bx-search {
+    cursor: pointer;
+    color: #0AB50Cff;
+}
+
+#content nav .form-input input {
+    flex-grow: 1;
+    padding: 0 16px;
+    height: 100%;
+    border: none;
+    background: var(--grey);
+    border-radius: 36px 0 0 36px;
+    outline: none;
+    width: 100%;
+    color: var(--dark);
+}
+
+#content nav .form-input button {
+    width: 36px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    border-radius: 0 36px 36px 0;
+    cursor: pointer;
+}
+
+#content nav .profile-img {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+    #content nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #content nav .form-inline {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    #content nav .d-flex {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    #content nav .dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+}
+
+/* Styles for tablets and smaller screens */
+@media (max-width: 1024px) {
+    #content nav {
+        padding: 0 16px;
+    }
+
+    #content nav .form-input input {
+        padding: 0 12px;
+    }
+
+    #content nav .form-input button {
+        width: 32px;
+        font-size: 16px;
+    }
+
+    #content nav .profile-img {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* Styles for phones */
+@media (max-width: 768px) {
+    #content nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0 8px;
+        height: auto; /* Allow height to adjust */
+    }
+
+    #content nav .form-input input {
+        padding: 0 8px;
+        border-radius: 24px 0 0 24px;
+    }
+
+    #content nav .form-input button {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+        border-radius: 0 24px 24px 0;
+    }
+
+    #content nav .profile-img {
+        width: 32px;
+        height: 32px;
+    }
+
+    #content nav .form-inline {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    #content nav .d-flex {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    #content nav .dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+}
+
+/* Styles for very small phones (including iPhone SE) */
+@media (max-width: 375px) {
+    #content nav {
+        padding: 0 4px;
+    }
+
+    #content nav .form-input input {
+        padding: 0 4px;
+        font-size: 14px;
+        border-radius: 16px 0 0 16px;
+    }
+
+    #content nav .form-input button {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+        border-radius: 0 16px 16px 0;
+    }
+
+    #content nav .profile-img {
+        width: 28px;
+        height: 28px;
+    }
+}

@@ -1,375 +1,330 @@
-<?php
-include("../connection.php");
-
-if (isset($_POST['openbtn'])) {
-		$change_state = mysqli_query($conn, "UPDATE election_state SET state = 'open', btn_class = 'closebtn', btn_name = 'closebtn'");
-	}
-if (isset($_POST['closebtn'])) {
-	$change_state = mysqli_query($conn, "UPDATE election_state SET state = 'close', btn_class = 'openbtn', btn_name = 'openbtn'");
-}
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <?php include '../Admin/constants/style.php'; ?>
+    <style>
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #f9f9f9; /* Light background for better readability */
+        }
 
-	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+        table th, table td {
+            border: 1px solid #ddd; /* Light grey border */
+            padding: 12px 15px; /* Increased padding for better readability */
+            text-align: left;
+        }
 
-	<link rel="stylesheet" href="../style3.css">
+        table th {
+            background: #0d3c5c; /* Dark blue background */
+            color: white;
+            font-weight: bold; /* Emphasize headers */
+            text-align: center; /* Center-align headers */
+        }
 
-	<title>COE-Voting-System</title>
+        table td {
+            background: #ffffff; /* White background for table cells */
+            color: #333; /* Darker text for contrast */
+        }
+
+        table tr:nth-child(even) td {
+            background: #f1f1f1; /* Light grey background for even rows */
+        }
+
+        table tr:hover td {
+            background: #e0e0e0; /* Light grey background on hover */
+        }
+
+        table th, table td {
+            border-radius: 4px; /* Rounded corners for cells */
+        }
+        /* Chart Container Styles */
+        .chart-container {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            flex: 1; /* Make charts flexibly fill the row */
+            margin-right: 20px; /* Add space between graphs */
+        }
+
+        .chart-container:last-child {
+            margin-right: 0; /* Remove right margin from the last chart container */
+        }
+
+        h2 {
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .container h2 {
+            margin-bottom: 20px;
+        }
+
+        /* Status Overview Styles */
+        .status-overview .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        /* Flexbox for Graphs */
+        .graph-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        /* Ensure responsive behavior */
+        @media (max-width: 768px) {
+            .graph-row {
+                flex-direction: column;
+            }
+
+            .chart-container {
+                margin-right: 0; /* Remove right margin on smaller screens */
+                margin-bottom: 20px; /* Add bottom margin for vertical spacing on smaller screens */
+            }
+        }
+
+        /* Container Styles for Table */
+        .table-container {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Status Overview Styles */
+    .status-overview .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .status-overview .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Different background colors for each card */
+    .card-total-applications {
+        background-color: #007bff; /* Blue */
+    }
+
+    .card-validation-region {
+        background-color: #17a2b8; /* Cyan */
+    }
+
+    .card-for-signature {
+        background-color: #ffc107; /* Yellow */
+    }
+
+    .card-total-processed {
+        background-color: #28a745; /* Green */
+    }
+
+    .card-in-progress-on-target {
+        background-color: #6f42c1; /* Purple */
+    }
+
+    .card-in-progress-urgent {
+        background-color: #dc3545; /* Red */
+    }
+
+    .card-returned {
+        background-color: #fd7e14; /* Orange */
+    }
+
+    .card-withdrawn {
+        background-color: #343a40; /* Dark Grey */
+    }
+
+    /* Text Styles */
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .card-text {
+        font-size: 1.25rem;
+    }
+    </style>
+    <title>SDO Batac LRMS</title>
 </head>
 <body>
 
+<!-- SIDEBAR -->
+<?php include("../Admin/constants/side_bar.php"); ?>
+<!-- SIDEBAR -->
 
-	<!-- SIDEBAR -->
-	<section id="sidebar">
-		<a href="#" class="brand">
-			<i class='bx bxs'> <img class= "logo-img" src = "../Img/COE.png" width=60px height=60px></i>
-			<span class="text">Voting System</span>
-		</a>
-		<ul class="side-menu top">
-			<li class="active">
-				<a href="index.php">
-					<i class='bx bxs-home' ></i>
-					<span class="text">Dashboard</span>
-				</a>
-			</li>
-			<li>
-				<a href="Votes.php">
-					<i class='bx bxs-check-square' ></i>
-					<span class="text">Votes</span>
-				</a>
-			</li>
-			<li>
-				<a href="Candidates.php">
-					<i class='bx bxs-user-check' ></i>
-					<span class="text">Candidates</span>
-				</a>
-			</li>
-			<li>
-				<a href="Voters.php">
-					<i class='bx bxs-user-pin' ></i>
-					<span class="text">Voter's</span>
-				</a>
-			</li>
-			<li>
-				<a href="Position.php">
-					<i class='bx bxs-certification'></i>
-					<span class="text">Office</span>
-				</a>
-			</li>
-			<li>
-				<a href="Election-Title.php">
-					<i class='bx bxs-group' ></i>
-					<span class="text">Election Title</span>
-				</a>
-			</li>
-			<li>
-				<a href="about_Us.php" class="logout">
-					<i class='bx bxs-log-out-circle' ></i>
-					<span class="text">About Us</span>
-				</a>
-			</li>
-		</ul>
-		<ul class="side-menu">
+<!-- CONTENT -->
+<section id="content">
+    <?php include("../Admin/constants/nav.php"); ?> 
 
-		</ul>
-	</section>
-	<!-- SIDEBAR -->
-
-
-
-	<!-- CONTENT -->
-	<section id="content">
-		<!-- NAVBAR -->
-		<nav>
-			<i class='bx bx-menu'></i>
-			<form action="#">
-				<div class="form-input">
-					<input type="hidden" placeholder="Search here">
-				</div>
-			</form>
-		</nav>
-		<!-- NAVBAR -->
-
-		<!-- MAIN -->
-		<main>
-			<!-- Dashboard -->
-			<div class="container-Dashboard" id="Dashboard">
-				<div class="head-title" id= "name2">
-					<div class="left">
-						<h1>Dashboard</h1>
-					</div>
-						<form method="POST">
-							<?php
-								$election_state_select = mysqli_query($conn, "SELECT * FROM `election_state`");
-								$fetch_state = mysqli_fetch_assoc($election_state_select);
-								$class = $fetch_state['btn_class'];
-								$name = $fetch_state['btn_name'];
-								$caption = "";
-								if($fetch_state['state'] == 'open'){
-									$caption = "CLOSE ELECTION";
-								}
-								else{
-									$caption = "OPEN ELECTION";
-								}
-							?>
-						<span> Election State: </span>
-						<button class="<?php echo $class;?>" name="<?php echo $name;?>" onclick= "return confirm('Are you sure you want to change the election state?')"><?php echo $caption;?></button>
-						</form>
-					</div>
-				</div><hr>
-
-				<ul class="box-info">
-					<li>
-						<i class='bx bxs-group' ></i>
-					<?php 
-
-					$sql ="SELECT * FROM candidates";
-
-					$res = mysqli_query($conn, $sql);
-
-			        $count = mysqli_num_rows($res);
-			        ?>
-						<span class="text">
-							<h3><?php echo $count; ?></h3>
-							<p>No. of Candidates</p>
-						</span>
-					</li>
-					<li>
-						<i class='bx bxs-check-square' ></i>
-						<span class="text">
-							<?php
-							$sql = "SELECT * FROM `voters`";
-
-							$res = mysqli_query($conn, $sql);
-
-							$count = mysqli_num_rows($res);
+    <!-- MAIN -->
+    <main>
+        <div class="head-title">
+            <div class="left">
+                <h1 id="table-title">Dashboard</h1>
+                <hr>
+            </div>
+        </div>
+        <!-- Status Overview on Top -->
+<div class="container mt-4 status-overview">
+    <h2>Status Overview</h2>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-3 card-total-applications">
+                <div class="card-body">
+                    <h5 class="card-title">Total Applications</h5>
+                    <p class="card-text">500</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3 card-validation-region">
+                <div class="card-body">
+                    <h5 class="card-title">Validation Region</h5>
+                    <p class="card-text">150</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3 card-for-signature">
+                <div class="card-body">
+                    <h5 class="card-title">For Signature</h5>
+                    <p class="card-text">75</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3 card-total-processed">
+                <div class="card-body">
+                    <h5 class="card-title">Total Processed</h5>
+                    <p class="card-text">200</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3 card-in-progress-on-target">
+                <div class="card-body">
+                    <h5 class="card-title">In Progress (On Target)</h5>
+                    <p class="card-text">30</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3 card-in-progress-urgent">
+                <div class="card-body">
+                    <h5 class="card-title">In Progress (Urgent)</h5>
+                    <p class="card-text">30</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3 card-returned">
+                <div class="card-body">
+                    <h5 class="card-title">Returned</h5>
+                    <p class="card-text">30</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3 card-withdrawn">
+                <div class="card-body">
+                    <h5 class="card-title">Withdrawn</h5>
+                    <p class="card-text">20</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-							?>
-							<h3><?php echo $count; ?></h3>
-					<?php 
+        <!-- Graphs Inline Horizontally -->
+        <div class="container mt-4">
+            <div class="graph-row">
+                <div class="chart-container">
+                    <h2>School Applications Bar Graph</h2>
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h2>School Applications Line Graph</h2>
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
 
-					$sql ="SELECT * FROM `votes`";
-
-					$res = mysqli_query($conn, $sql);
-
-					$count = mysqli_num_rows($res);
-					
-					?>
-						<span>
-							<p>Total Voters</p>
-						</span>
-					</li>
-					<li>
-						<i class='bx bxs-user-check' ></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters`");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>Turn out of Votes</p>
-						</span>
-					</li>
-				</ul>
-			<div class="container-Dashboard" id="Dashboard">
-				<div class="head-title">
-					<div class="left">
-						<h2>Turn out of Votes by Courses</h2><hr>
-					</div>
-				</div>
-				<ul class="box-info-2"> 
-					<li>
-						<i><img src= "../Img/2.png" width= 80px height= 80px></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Agricultural and Biosystems Engineering' AND voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Agricultural and Biosystems Engineering'");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>BS in Agricultural and Biosystems Engineering</p>
-						</span>
-					</li>
-					<li>
-						<i><img src= "../Img/9.png" width= 80px height= 80px></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Ceramics Engineering' AND voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Ceramics Engineering'");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>BS in Ceramics Engineering</p>
-						</span>
-					</li>
-					<li>
-						<i><img src= "../Img/7.png" width= 80px height= 80px></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Chemical Engineering' AND voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Chemical Engineering'");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>BS in Chemical Engineering</p>
-						</span>
-					</li>
-					<li>
-						<i><img src= "../Img/8.png" width= 80px height= 80px></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Civil Engineering' AND voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Civil Engineering'");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>BS in Civil Engineering</p>
-						</span>
-					</li>
-					<li>
-						<i><img src= "../Img/6.png" width= 80px height= 80px></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Computer Engineering' AND voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Computer Engineering'");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>BS in Computer Engineering</p>
-						</span>
-					</li>
-					<li>
-						<i><img src= "../Img/1.png" width= 80px height= 80px></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Electrical Engineering' AND voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Electrical Engineering'");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>BS in Electrical Engineering</p>
-						</span>
-					</li>
-					<li>
-						<i><img src= "../Img/4.png" width= 80px height= 80px></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Electronics Engineering' AND voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Electronics Engineering'");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>BS in Electronics Engineering</p>
-						</span>
-					</li>
-					<li>
-						<i><img src= "../Img/3.png" width= 80px height= 80px></i>
-						<?php 
-									$t_votes = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Mechanical Engineering' AND voted = 'Yes'");
-									$vote_quantity = mysqli_num_rows($t_votes);
-
-									$voters_select = mysqli_query($conn, "SELECT * FROM `voters` where course = 'BS in Mechanical Engineering'");
-									$voters_quantity = mysqli_num_rows($voters_select);
-
-									if ($voters_quantity != 0) {
-   									$t_percent = (intval($vote_quantity)/intval($voters_quantity)) * 100 ;
-									$formated_general = number_format($t_percent, 2);
-									} else {
-   									 $formated_general = 0;
-									}
-									?>
-						<span class="text">
-							<h3><?php echo $formated_general; ?>%</h3>
-							<p>BS in Mechanical Engineering</p>
-						</span>
-					</li>
-				</ul>
-			</div>
-		</main>
-		<!-- Votes -->                      
-		<!-- MAIN -->
-	</section>
-	<!-- CONTENT -->
-
-	<script src="../script.js"></script>
+        <!-- Applications List Table in a Container -->
+        <div class="container mt-4 table-container">
+            <h2>Applications List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">School</th>
+                        <th scope="col">Application Type</th>
+                        <th scope="col">Grade Level</th>
+                        <th scope="col">Application Date</th>
+                        <th scope="col">Target Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>BS in Agricultural and Biosystems Engineering</td>
+                        <td>120</td>
+                        <td>Approved</td>
+                        <td>01/10/2024</td>
+                        <td>02/20/2024</td>
+                        <td>Processing</td>
+                        <td>Edit | Remove</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>BS in Ceramics Engineering</td>
+                        <td>85</td>
+                        <td>Not Approved</td>
+                        <td>01/15/2024</td>
+                        <td>02/25/2024</td>
+                        <td>Rejected</td>
+                        <td>Edit | Remove</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>BS in Chemical Engineering</td>
+                        <td>95</td>
+                        <td>Approved</td>
+                        <td>01/20/2024</td>
+                        <td>02/28/2024</td>
+                        <td>Approved</td>
+                        <td>Edit | Remove</td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <!-- MAIN -->
+</section>
+<!-- CONTENT -->
+<script src="../script.js"></script>
+<script src="../Admin/scripts/charts.js"></script>
 </body>
 </html>

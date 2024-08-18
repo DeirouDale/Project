@@ -1,0 +1,34 @@
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button.primary {
+    background: var(--blue);
+    color: white;
+}
+
+button.primary:hover {
+    background: darken(var(--blue), 10%);
+}
+
+button.secondary {
+    background: var(--grey);
+    color: var(--dark);
+}
+
+button.secondary:hover {
+    background: darken(var(--grey), 10%);
+}
+
+button.danger {
+    background: var(--red);
+    color: white;
+}
+
+button.danger:hover {
+    background: darken(var(--red), 10%);
+}

@@ -3,7 +3,7 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "voting_system";
+$database = "sdo_batac";
 
 // Create a new mysqli connection
 $conn = new mysqli($host, $username, $password, $database);
