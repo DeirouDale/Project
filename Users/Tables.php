@@ -51,7 +51,7 @@ $current_day = str_pad($today['mday'], 2, '0', STR_PAD_LEFT); // Ensure two-digi
 					<?php foreach ($tables as $table): ?>
 						<?php if ($table['table_no'] >= 1 && $table['table_no'] <= 9): ?>
 							<li>
-								<a href="../Users/Table_Format/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
+								<a href="../Users/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
 									<i class='bx bxs-group'></i>
 									<span class="text">
 										<p>Table <?php echo $table['table_no']; ?>. <?php echo $table['table_name']; ?></p>
@@ -74,7 +74,7 @@ $current_day = str_pad($today['mday'], 2, '0', STR_PAD_LEFT); // Ensure two-digi
 					<?php foreach ($tables as $table): ?>
 						<?php if ($table['table_no'] >= 10 && $table['table_no'] <= 18): ?>
 							<li>
-								<a href="../Users/Table_Format/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
+								<a href="../Users/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
 									<i class='bx bxs-group'></i>
 									<span class="text">
 										<p>Table <?php echo $table['table_no']; ?>. <?php echo $table['table_name']; ?></p>
@@ -97,7 +97,7 @@ $current_day = str_pad($today['mday'], 2, '0', STR_PAD_LEFT); // Ensure two-digi
 					<?php foreach ($tables as $table): ?>
 						<?php if ($table['table_no'] >= 19 && $table['table_no'] <= 23): ?>
 							<li>
-								<a href="../Users/Table_Format/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
+								<a href="../Users/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
 									<i class='bx bxs-group'></i>
 									<span class="text">
 										<p>Table <?php echo $table['table_no']; ?>. <?php echo $table['table_name']; ?></p>
@@ -120,7 +120,7 @@ $current_day = str_pad($today['mday'], 2, '0', STR_PAD_LEFT); // Ensure two-digi
 					<?php foreach ($tables as $table): ?>
 						<?php if ($table['table_no'] == 27): ?>
 							<li>
-								<a href="../Users/Table_Format/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
+								<a href="../Users/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
 									<i class='bx bxs-group'></i>
 									<span class="text">
 										<p>Table <?php echo $table['table_no']; ?>. <?php echo $table['table_name']; ?></p>
@@ -143,7 +143,7 @@ $current_day = str_pad($today['mday'], 2, '0', STR_PAD_LEFT); // Ensure two-digi
 					<?php foreach ($tables as $table): ?>
 						<?php if ($table['table_no'] >= 28 && $table['table_no'] <= 32): ?>
 							<li>
-								<a href="../Users/Table_Format/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
+								<a href="../Users/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
 									<i class='bx bxs-group'></i>
 									<span class="text">
 										<p>Table <?php echo $table['table_no']; ?>. <?php echo $table['table_name']; ?></p>
@@ -166,7 +166,7 @@ $current_day = str_pad($today['mday'], 2, '0', STR_PAD_LEFT); // Ensure two-digi
 					<?php foreach ($tables as $table): ?>
 						<?php if ($table['table_no'] >= 24 && $table['table_no'] <= 27): ?>
 							<li>
-									<a href="../Users/Table_Format/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
+									<a href="../Users/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
 									<i class='bx bxs-group'></i>
 									<span class="text">
 										<p>Table <?php echo $table['table_no']; ?>. <?php echo $table['table_name']; ?></p>
@@ -189,7 +189,7 @@ $current_day = str_pad($today['mday'], 2, '0', STR_PAD_LEFT); // Ensure two-digi
 					<?php foreach ($tables as $table): ?>
 						<?php if ($table['table_no'] >= 34 && $table['table_no'] <= 36): ?>
 							<li>
-								<a href="../Users/Table_Format/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
+								<a href="../Users/Table_<?php echo $table['table_no']; ?>.php?school_id=<?php echo urlencode($school_id); ?>">
 									<i class='bx bxs-group'></i>
 									<span class="text">
 										<p>Table <?php echo $table['table_no']; ?>. <?php echo $table['table_name']; ?></p>

@@ -1,330 +1,602 @@
+<?php
+include '../connection.php';
+
+// Pagination variables
+$limit = 6; // Number of entries per page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start = ($page - 1) * $limit;
+
+// Query to fetch total number of announcements
+$count_sql = "SELECT COUNT(*) AS total FROM announcements";
+$count_result = $conn->query($count_sql);
+$total_announcements = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_announcements / $limit);
+
+// Query to fetch announcements for the current page
+$sql = "SELECT date_posted, title, description, file_name FROM announcements LIMIT $start, $limit";
+$result = $conn->query($sql);
+?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <?php include '../Admin/constants/style.php'; ?>
-    <style>
-        /* Table Styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #f9f9f9; /* Light background for better readability */
-        }
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/main.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/main.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script> 
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-        table th, table td {
-            border: 1px solid #ddd; /* Light grey border */
-            padding: 12px 15px; /* Increased padding for better readability */
-            text-align: left;
-        }
+<?php include '../Admin/constants/style.php'; ?>
+<style>
+    #content main .box-info-4 {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 36px;
+    }
 
-        table th {
-            background: #0d3c5c; /* Dark blue background */
-            color: white;
-            font-weight: bold; /* Emphasize headers */
-            text-align: center; /* Center-align headers */
-        }
+    #content main .box-info-4 li {
+        padding: 24px;
+        background: var(--light);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        grid-gap: 24px;
+        cursor: pointer;
+        flex: 1;
+        margin: 0 12px;
+    }
 
-        table td {
-            background: #ffffff; /* White background for table cells */
-            color: #333; /* Darker text for contrast */
-        }
+    #content main .box-info-4 li .bx {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        font-size: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        table tr:nth-child(even) td {
-            background: #f1f1f1; /* Light grey background for even rows */
-        }
+    #content main .box-info-4 li:nth-child(1) .bx {
+        background: var(--light-blue);
+        color: var(--blue);
+    }
 
-        table tr:hover td {
-            background: #e0e0e0; /* Light grey background on hover */
-        }
+    #content main .box-info-4 li:nth-child(2) .bx {
+        background: var(--light-yellow);
+        color: var(--yellow);
+    }
 
-        table th, table td {
-            border-radius: 4px; /* Rounded corners for cells */
-        }
-        /* Chart Container Styles */
-        .chart-container {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            flex: 1; /* Make charts flexibly fill the row */
-            margin-right: 20px; /* Add space between graphs */
-        }
+    #content main .box-info-4 li:nth-child(3) .bx {
+        background: var(--light-orange);
+        color: var(--orange);
+    }
 
-        .chart-container:last-child {
-            margin-right: 0; /* Remove right margin from the last chart container */
-        }
+    #content main .box-info-4 li:nth-child(4) .bx {
+        background: var(--dark-grey);
+        color: var(--dark);
+    }
 
-        h2 {
-            font-weight: bold;
-            color: var(--dark-blue);
-        }
+    #content main .box-info-4 li .text h3 {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--dark);
+    }
 
-        .container h2 {
-            margin-bottom: 20px;
-        }
+    #content main .box-info-4 li .text p {
+        font-size: 18px;
+        color: #4b090a;
+    }
 
-        /* Status Overview Styles */
-        .status-overview .card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
+    /* Table container */
+    .table-container {
+        background: var(--light);
+        padding: 24px;
+        border-radius: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        max-width: 100%; /* Prevent exceeding container's width */
+        box-sizing: border-box; /* Include padding and border in element's total width and height */
+        overflow: hidden; /* Prevent content overflow */
+        margin-top: 20px;
+    }
 
-        /* Flexbox for Graphs */
-        .graph-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #f9f9f9; /* Light background for better readability */
+    }
 
-        /* Ensure responsive behavior */
-        @media (max-width: 768px) {
-            .graph-row {
-                flex-direction: column;
-            }
+    table th, table td {
+        border: 1px solid #ddd; /* Light grey border */
+        padding: 12px 15px; /* Increased padding for better readability */
+        text-align: left;
+    }
 
-            .chart-container {
-                margin-right: 0; /* Remove right margin on smaller screens */
-                margin-bottom: 20px; /* Add bottom margin for vertical spacing on smaller screens */
-            }
-        }
-
-        /* Container Styles for Table */
-        .table-container {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        /* Status Overview Styles */
-    .status-overview .card {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        border-radius: 8px;
+    table th {
+        background: #0d3c5c; /* Dark blue background */
         color: white;
-        text-align: center;
-        padding: 20px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        font-weight: bold; /* Emphasize headers */
+        text-align: center; /* Center-align headers */
     }
 
-    .status-overview .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    table td {
+        background: #ffffff; /* White background for table cells */
+        color: #333; /* Darker text for contrast */
     }
 
-    /* Different background colors for each card */
-    .card-total-applications {
-        background-color: #007bff; /* Blue */
+    table tr:nth-child(even) td {
+        background: #f1f1f1; /* Light grey background for even rows */
     }
 
-    .card-validation-region {
-        background-color: #17a2b8; /* Cyan */
+    table tr:hover td {
+        background: #e0e0e0; /* Light grey background on hover */
     }
 
-    .card-for-signature {
-        background-color: #ffc107; /* Yellow */
+    table th, table td {
+        border-radius: 4px; /* Rounded corners for cells */
     }
 
-    .card-total-processed {
-        background-color: #28a745; /* Green */
-    }
-
-    .card-in-progress-on-target {
-        background-color: #6f42c1; /* Purple */
-    }
-
-    .card-in-progress-urgent {
-        background-color: #dc3545; /* Red */
-    }
-
-    .card-returned {
-        background-color: #fd7e14; /* Orange */
-    }
-
-    .card-withdrawn {
-        background-color: #343a40; /* Dark Grey */
-    }
-
-    /* Text Styles */
-    .card-title {
-        font-size: 1.5rem;
+    .table-container h2 {
+        font-size: 30px;
         font-weight: bold;
+        color: #0d3c5c; /* Dark blue color for the header */
+        display: flex;
+        align-items: center;
+        gap: 8px; /* Space between icon and text */
     }
 
-    .card-text {
-        font-size: 1.25rem;
+    .table-container i.fas.fa-bell {
+        color: #f39c12; /* Golden color for the bell icon */
+        font-size: 32px; /* Size of the bell icon */
     }
-    </style>
-    <title>SDO Batac LRMS</title>
+
+    /* Charts container */
+/* Responsive charts container */
+.chart-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+@media (min-width: 768px) {
+.charts-container {
+    flex-direction: row;
+}
+}
+
+.chart-box {
+height: 400px; /* Increased height for better chart visualization */
+}
+
+
+/* Style for individual charts */
+.chart-box {
+background: var(--light);
+padding: 24px;
+border-radius: 20px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+flex: 1; /* Allow charts to grow and shrink */
+min-width: 0; /* Prevent overflow and ensure proper resizing */
+height: 300px; /* Set a fixed height for charts */
+}
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .page-link {
+        margin: 0 5px;
+        padding: 10px 15px;
+        background: #0d3c5c;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .page-link.active {
+        background: #004d80;
+    }
+
+    .page-link:hover {
+        background: #003a5b;
+    }
+</style>
+
+<title>SDO Batac LRMS</title>
 </head>
-<body>
 
+<body>
 <!-- SIDEBAR -->
 <?php include("../Admin/constants/side_bar.php"); ?>
 <!-- SIDEBAR -->
 
 <!-- CONTENT -->
 <section id="content">
-    <?php include("../Admin/constants/nav.php"); ?> 
+    <?php include("../Admin/constants/nav.php"); ?>
 
     <!-- MAIN -->
-    <main>
+    <main class="flex-1 p-6">
+        <div class="container-Dashboard" id="Dashboard">
         <div class="head-title">
-            <div class="left">
-                <h1 id="table-title">Dashboard</h1>
-                <hr>
-            </div>
+        <div class="left">
+            <h1>Dashboard<hr>
         </div>
-        <!-- Status Overview on Top -->
-<div class="container mt-4 status-overview">
-    <h2>Status Overview</h2>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card mb-3 card-total-applications">
-                <div class="card-body">
-                    <h5 class="card-title">Total Applications</h5>
-                    <p class="card-text">500</p>
+
+            <!-- Info Cards -->
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <li class="flex items-center p-6 bg-white rounded-lg shadow-lg">
+                    <i class='bx bxs-group text-blue-600 text-4xl mr-4'></i>
+                    <div class="text">
+                        <h3 class="text-xl font-semibold text-gray-700">Content Here</h3>
+                    </div>
+                </li>
+                <li class="flex items-center p-6 bg-white rounded-lg shadow-lg">
+                    <i class='bx bxs-check-square text-yellow-500 text-4xl mr-4'></i>
+                    <div class="text">
+                        <p class="text-xl font-semibold text-gray-700">Content Here</p>
+                    </div>
+                </li>
+                <li class="flex items-center p-6 bg-white rounded-lg shadow-lg">
+                    <i class='bx bxs-user-check text-orange-500 text-4xl mr-4'></i>
+                    <div class="text">
+                        <h3 class="text-xl font-semibold text-gray-700">Content Here</h3>
+                    </div>
+                </li>
+                <li class="flex items-center p-6 bg-white rounded-lg shadow-lg">
+                    <i class='bx bxs-user-check text-green-500 text-4xl mr-4'></i>
+                    <div class="text">
+                        <h3 class="text-xl font-semibold text-gray-700">Content Here</h3>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Charts Container -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <canvas id="chart1"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <canvas id="chart2"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <canvas id="chart3"></canvas>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3 card-validation-region">
-                <div class="card-body">
-                    <h5 class="card-title">Validation Region</h5>
-                    <p class="card-text">150</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3 card-for-signature">
-                <div class="card-body">
-                    <h5 class="card-title">For Signature</h5>
-                    <p class="card-text">75</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3 card-total-processed">
-                <div class="card-body">
-                    <h5 class="card-title">Total Processed</h5>
-                    <p class="card-text">200</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3 card-in-progress-on-target">
-                <div class="card-body">
-                    <h5 class="card-title">In Progress (On Target)</h5>
-                    <p class="card-text">30</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3 card-in-progress-urgent">
-                <div class="card-body">
-                    <h5 class="card-title">In Progress (Urgent)</h5>
-                    <p class="card-text">30</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3 card-returned">
-                <div class="card-body">
-                    <h5 class="card-title">Returned</h5>
-                    <p class="card-text">30</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3 card-withdrawn">
-                <div class="card-body">
-                    <h5 class="card-title">Withdrawn</h5>
-                    <p class="card-text">20</p>
-                </div>
-            </div>
-        </div>
-    </div>
+
+            <!-- Announcements Table -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+<h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+    <i class="fas fa-bell text-yellow-500 text-2xl mr-2"></i> Activity Log Table
+</h2>
+<div class="overflow-x-auto">
+    <table class="min-w-full table-auto">
+        <thead class="bg-blue-600 text-white">
+            <tr>
+                <th class="px-4 py-2">Date</th>
+                <th class="px-4 py-2">Title</th>
+                <th class="px-4 py-2">Description</th>
+                <th class="px-4 py-2">Document</th>
+            </tr>
+        </thead>
+        <tbody id="announcements-table-body" class="bg-white text-gray-700">
+            <!-- Table rows will be inserted here by AJAX -->
+            <?php
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr class='border-b hover:bg-gray-100'>";
+                    echo "<td class='px-4 py-2'>" . htmlspecialchars($row["date_posted"]) . "</td>";
+                    echo "<td class='px-4 py-2'>" . htmlspecialchars($row["title"]) . "</td>";
+                    echo "<td class='px-4 py-2'>" . htmlspecialchars($row["description"]) . "</td>";
+                    echo "<td class='px-4 py-2'>";
+                    if (!empty($row['file_name'])) {
+                        echo '<a href="../Announcements/' . htmlspecialchars($row['file_name']) . '" class="text-blue-600 hover:underline" target="_blank">View File</a>';
+                    } else {
+                        echo "No File";
+                    }
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='4' class='px-4 py-2 text-center'>No announcements found</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
 </div>
-
-
-        <!-- Graphs Inline Horizontally -->
-        <div class="container mt-4">
-            <div class="graph-row">
-                <div class="chart-container">
-                    <h2>School Applications Bar Graph</h2>
-                    <canvas id="barChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h2>School Applications Line Graph</h2>
-                    <canvas id="lineChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Applications List Table in a Container -->
-        <div class="container mt-4 table-container">
-            <h2>Applications List</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">School</th>
-                        <th scope="col">Application Type</th>
-                        <th scope="col">Grade Level</th>
-                        <th scope="col">Application Date</th>
-                        <th scope="col">Target Date</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>BS in Agricultural and Biosystems Engineering</td>
-                        <td>120</td>
-                        <td>Approved</td>
-                        <td>01/10/2024</td>
-                        <td>02/20/2024</td>
-                        <td>Processing</td>
-                        <td>Edit | Remove</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>BS in Ceramics Engineering</td>
-                        <td>85</td>
-                        <td>Not Approved</td>
-                        <td>01/15/2024</td>
-                        <td>02/25/2024</td>
-                        <td>Rejected</td>
-                        <td>Edit | Remove</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>BS in Chemical Engineering</td>
-                        <td>95</td>
-                        <td>Approved</td>
-                        <td>01/20/2024</td>
-                        <td>02/28/2024</td>
-                        <td>Approved</td>
-                        <td>Edit | Remove</td>
-                    </tr>
-                    <!-- Add more rows as needed -->
-                </tbody>
-            </table>
+<!-- Pagination Controls -->
+<div class="flex justify-center mt-4">
+    <?php
+    if ($total_pages > 1) {
+        for ($i = 1; $i <= $total_pages; $i++) {
+            $active = ($i == $page) ? 'bg-blue-700' : 'bg-blue-600';
+            echo '<a class="page-link ' . $active . '" href="#" data-page="' . $i . '">' . $i . '</a>';
+        }
+    }
+    ?>
+</div>
+</div>
         </div>
     </main>
     <!-- MAIN -->
 </section>
 <!-- CONTENT -->
+<!-- CONTENT -->
+<?php
+// Fetch data for the first two charts
+$sql = "SELECT DATE_FORMAT(date_completed, '%Y-%m') AS month, COUNT(*) AS task_count 
+    FROM employee_tasks 
+    WHERE status = 2  
+    GROUP BY month 
+    ORDER BY month";
+
+$result = $conn->query($sql);
+
+$months = [];
+$taskCounts = [];
+
+while ($row = $result->fetch_assoc()) {
+    $months[] = date('F Y', strtotime($row['month'] . '-01'));
+    $taskCounts[] = $row['task_count'];
+}
+
+// Fetch data for the pie chart
+$pieSql = "SELECT status, COUNT(*) AS task_count FROM employee_tasks GROUP BY status";
+$pieResult = $conn->query($pieSql);
+
+$pieLabels = [];
+$pieData = [];
+
+while ($row = $pieResult->fetch_assoc()) {
+    $status = ($row['status'] == 1) ? 'Pending' : (($row['status'] == 2) ? 'Completed' : 'Not Started');
+    $pieLabels[] = $status;
+    $pieData[] = $row['task_count'];
+}
+?>
+<script>
+    var months = <?php echo json_encode($months); ?>;
+    var taskCounts = <?php echo json_encode($taskCounts); ?>;
+    var pieLabels = <?php echo json_encode($pieLabels); ?>;
+    var pieData = <?php echo json_encode($pieData); ?>;
+
+    // Bar Chart
+    var ctx1 = document.getElementById('chart1').getContext('2d');
+var gradientFill = ctx1.createLinearGradient(0, 0, 0, 400);
+gradientFill.addColorStop(0, 'rgba(75, 192, 192, 0.4)');
+gradientFill.addColorStop(1, 'rgba(75, 192, 192, 0.1)');
+
+var chart1 = new Chart(ctx1, {
+type: 'bar',
+data: {
+    labels: months,
+    datasets: [{
+        label: 'Completed Tasks',
+        data: taskCounts,
+        backgroundColor: gradientFill,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 2,
+        borderRadius: 10, // Rounded bars
+    }]
+},
+options: {
+    maintainAspectRatio: false,
+    layout: {
+        padding: {
+            left: 15,
+            right: 15,
+            top: 15,
+            bottom: 15
+        }
+    },
+    scales: {
+        x: {
+            beginAtZero: true,
+            grid: {
+                display: false,
+            },
+            ticks: {
+                color: '#333',
+            }
+        },
+        y: {
+            beginAtZero: true,
+            grid: {
+                color: '#ddd',
+            },
+            ticks: {
+                color: '#333',
+            }
+        }
+    },
+    plugins: {
+        legend: {
+            position: 'top',
+            labels: {
+                color: '#333',
+                font: {
+                    size: 14,
+                    weight: 'bold'
+                }
+            }
+        },
+        tooltip: {
+            callbacks: {
+                label: function(tooltipItem) {
+                    return tooltipItem.label + ': ' + tooltipItem.raw + ' tasks';
+                }
+            }
+        }
+    }
+}
+});
+
+    // Line Chart
+    // Line Chart
+var ctx2 = document.getElementById('chart2').getContext('2d');
+var gradientStroke = ctx2.createLinearGradient(0, 0, 0, 400);
+gradientStroke.addColorStop(0, 'rgba(75, 192, 192, 1)');
+gradientStroke.addColorStop(1, 'rgba(75, 192, 192, 0.3)');
+
+var chart2 = new Chart(ctx2, {
+type: 'line',
+data: {
+    labels: months,
+    datasets: [{
+        label: 'Completed Tasks',
+        data: taskCounts,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: gradientStroke,
+        fill: true,
+        tension: 0.4, // Smooth curves
+        borderWidth: 2
+    }]
+},
+options: {
+    maintainAspectRatio: false,
+    layout: {
+        padding: {
+            left: 15,
+            right: 15,
+            top: 15,
+            bottom: 15
+        }
+    },
+    scales: {
+        x: {
+            beginAtZero: true,
+            grid: {
+                display: false,
+            },
+            ticks: {
+                color: '#333',
+            }
+        },
+        y: {
+            beginAtZero: true,
+            grid: {
+                color: '#ddd',
+            },
+            ticks: {
+                color: '#333',
+            }
+        }
+    },
+    plugins: {
+        legend: {
+            position: 'top',
+            labels: {
+                color: '#333',
+                font: {
+                    size: 14,
+                    weight: 'bold'
+                }
+            }
+        },
+        tooltip: {
+            callbacks: {
+                label: function(tooltipItem) {
+                    return tooltipItem.label + ': ' + tooltipItem.raw + ' tasks';
+                }
+            }
+        }
+    }
+}
+});
+
+
+    // Pie Chart
+var ctx3 = document.getElementById('chart3').getContext('2d');
+var chart3 = new Chart(ctx3, {
+type: 'pie',
+data: {
+    labels: pieLabels,
+    datasets: [{
+        label: 'Task Status Distribution',
+        data: pieData,
+        backgroundColor: [
+            'rgba(255, 99, 132, 0.8)', // Red
+            'rgba(75, 192, 192, 0.8)', // Green
+            'rgba(255, 206, 86, 0.8)', 
+        ],
+        borderColor: '#fff',
+        borderWidth: 2,
+    }]
+},
+options: {
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'top',
+            labels: {
+                color: '#333',
+                font: {
+                    size: 14,
+                    weight: 'bold'
+                }
+            }
+        },
+        tooltip: {
+            callbacks: {
+                label: function(tooltipItem) {
+                    return tooltipItem.label + ': ' + tooltipItem.raw + ' tasks';
+                }
+            }
+        }
+    }
+}
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// Event delegation for pagination links
+document.querySelectorAll('.page-link').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+        event.preventDefault();
+
+        var page = this.getAttribute('data-page');
+
+        // Fetch the table content via AJAX
+        fetch('dashboard/fetch_announcements.php?page=' + page)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('announcements-table-body').innerHTML = data;
+
+                // Update active pagination link
+                document.querySelectorAll('.page-link').forEach(function (link) {
+                    link.classList.remove('bg-blue-700');
+                    link.classList.add('bg-blue-600');
+                });
+                this.classList.remove('bg-blue-600');
+                this.classList.add('bg-blue-700');
+            })
+            .catch(error => console.error('Error:', error));
+    });
+});
+});
+</script>
+
 <script src="../script.js"></script>
-<script src="../Admin/scripts/charts.js"></script>
 </body>
+
 </html>

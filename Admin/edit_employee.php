@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $contact_number = mysqli_real_escape_string($conn, $_POST['contact_number']);
     $status = mysqli_real_escape_string($conn, $_POST['status']);
+    $usertype = mysqli_real_escape_string($conn, $_POST['usertype']);
     
     $query = "UPDATE employees SET
         name = '$name',
@@ -16,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         department = '$department',
         email = '$email',
         contact_number = '$contact_number',
-        status = '$status'
+        status = '$status',
+        usertype = '$usertype'
         WHERE employee_id = '$employee_id'";
     
     if (mysqli_query($conn, $query)) {

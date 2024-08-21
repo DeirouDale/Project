@@ -12,3 +12,4 @@
 <link rel="stylesheet" href="../styles/buttons.css">
 <link rel="stylesheet" href="../styles/tables.css">
 <link rel="stylesheet" href="../styles/popup.css">
+<link rel="stylesheet" href="../styles/emp_task.css">

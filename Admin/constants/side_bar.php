@@ -24,15 +24,21 @@
                 <span class="text">Dashboard</span>
             </a>
         </li>
+        <li class="<?= $current_page == 'Reports.php' ? 'active' : '' ?>">
+            <a href="Reports.php">
+                <i class='bx bx-bar-chart'></i>
+                <span class="text">Reports</span>
+            </a>
+        </li>
+        
+        <!-- Office Management Section -->
+        <li class="menu-label">Office Management</li>
         <li class="<?= $current_page == 'Tasks.php' ? 'active' : '' ?>">
             <a href="Tasks.php">
                 <i class='bx bx-file'></i>
-                <span class="text">Assign Tasks</span>
+                <span class="text">Tasks</span>
             </a>
         </li>
-
-        <!-- Office Management Section -->
-        <li class="menu-label">Office Management</li>
         <li class="<?= $current_page == 'Employees.php' ? 'active' : '' ?>">
             <a href="Employees.php">
                 <i class='bx bx-group'></i>
@@ -70,7 +76,7 @@
         <!-- Settings Section -->
         <li class="menu-label">Settings</li>
         <li>
-            <a href="../logout.php" class="logout">
+            <a href="../login_employee/emp_logout.php" class="logout">
                 <i class='bx bx-log-out'></i>
                 <span class="text">Logout</span>
             </a>

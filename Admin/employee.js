@@ -72,6 +72,7 @@ $(document).ready(function() {
                 modal.find('#editEmployeeEmail').val(data.email);
                 modal.find('#editEmployeeContact').val(data.contact_number);
                 modal.find('#editEmployeeStatus').val(data.status);
+                modal.find('#editEmployeeUsertype').val(data.status);
             },
             error: function(xhr, status, error) {
                 console.error("AJAX Error: " + status + " - " + error);

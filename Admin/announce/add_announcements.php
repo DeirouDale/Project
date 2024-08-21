@@ -2,12 +2,6 @@
 session_start();
 include("../connection.php");
 
-// Check if the user is logged in
-if (!isset($_SESSION['school_id'])) {
-    header("Location: login.php?error=Please log in first");
-    exit();
-}
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data
     $title = $_POST['title'];

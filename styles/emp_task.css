@@ -1,0 +1,473 @@
+              
+               .card {
+                height: 254px;
+                background: linear-gradient(135deg, #f9f9f9 0%, #e8e8e8 100%);
+                border-radius: 15px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                margin-bottom: 20px;
+            }
+            
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            }
+            
+                    
+                    .warning-sign {
+                        color: #f39c12; /* Yellow color for the warning sign */
+                        font-size: 1.2em; /* Adjust size as needed */
+                        margin-left: 0.5em;
+                    }
+                    
+                .shadow {
+                    box-shadow: inset 0 -3em 3em rgba(0,0,0,0.1),
+                                0 0  0 2px rgb(190, 190, 190),
+                                0.3em 0.3em 1em rgba(0,0,0,0.3);
+                }
+                
+                .card-body {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    height: 100%;
+                    padding: 20px;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                }
+                
+                .card-title {
+                font-size: 1.75rem;
+                font-weight: 700;
+                color: #0a3d62;
+                line-height: 1.2;
+                margin-bottom: 10px;
+            }
+            
+            .project-id {
+                font-size: 1rem;
+                color: #555555;
+                margin-bottom: 15px;
+                font-weight: 500;
+            }
+            
+            .card-text {
+                font-size: 1.1rem;
+                font-weight: 400;
+                color: #333333;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+            
+                
+                .project-id .text-muted {
+                    color: #777777; /* Slightly darker muted text */
+                    margin-left: 10px;
+                }
+                
+                .card-text {
+                    font-size: 1rem; /* Increased font size for better readability */
+                    font-weight: 500; /* Semi-bold font weight for emphasis */
+                    color: #444444; /* Slightly darker text color */
+                    margin-bottom: 15px; /* Increased margin for spacing */
+                }
+                
+                
+                .card-text a:hover {
+                    text-decoration: underline;
+                }
+                
+                .dates {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-top: auto; /* Pushes it to the bottom of the container */
+                    font-size: 1rem;
+                    color: #555555;
+                }
+                
+                .dates .card-text {
+                    margin-right: 20px;
+                    font-weight: 500;
+                }
+                
+                
+                .btn-primary {
+                    background-color: #007bff;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 10px 20px; /* Increased padding for a more substantial button */
+                    font-size: 1rem; /* Increased font size for better readability */
+                    font-weight: 600; /* Bold font weight for prominence */
+                    color: #ffffff; /* White text for contrast */
+                    margin-bottom: 20px;
+                }
+                
+                .btn-primary:hover {
+                    background-color: #0056b3;
+                }
+                /* Button Styles */
+                .animated-button {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 10px 24px; /* Reduced padding */
+                    border: 3px solid; /* Slightly thinner border */
+                    border-color: transparent;
+                    font-size: 14px; /* Reduced font size */
+                    background-color: inherit;
+                    border-radius: 50px; /* Slightly smaller border radius */
+                    font-weight: 600;
+                    color: black;
+                    box-shadow: 0 0 0 2px black;
+                    cursor: pointer;
+                    overflow: hidden;
+                    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+                    margin-bottom: 10px;
+                }
+                
+                .animated-button svg {
+                    position: absolute;
+                    width: 20px; /* Reduced size of the arrows */
+                    fill: black;
+                    z-index: 9;
+                    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+                }
+                
+                .animated-button .arr-1 {
+                    right: 12px; /* Adjusted position to match smaller button */
+                }
+                
+                .animated-button .arr-2 {
+                    left: -20%;
+                }
+                
+                .animated-button .circle {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 16px; /* Reduced circle size */
+                    height: 16px;
+                    background-color: greenyellow;
+                    border-radius: 50%;
+                    opacity: 0;
+                    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+                }
+                
+                .animated-button .text {
+                    position: relative;
+                    z-index: 1;
+                    transform: translateX(-10px); /* Adjusted position */
+                    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+                }
+                
+                .animated-button:hover {
+                    box-shadow: 0 0 0 12px transparent;
+                    color: #212121;
+                    border-radius: 12px;
+                }
+                
+                .animated-button:hover .arr-1 {
+                    right: -20%;
+                }
+                
+                .animated-button:hover .arr-2 {
+                    left: 12px; /* Adjusted position */
+                }
+                
+                .animated-button:hover .text {
+                    transform: translateX(10px); /* Adjusted position */
+                }
+                
+                .animated-button:hover svg {
+                    fill: #212121;
+                }
+                
+                .animated-button:active {
+                    scale: 0.95;
+                    box-shadow: 0 0 0 4px greenyellow;
+                }
+                
+                .animated-button:hover .circle {
+                    width: 180px; /* Adjusted size to match smaller button */
+                    height: 100px;
+                    opacity: 1;
+                }
+                .turned-in-button {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    padding: 10px 24px;
+                    border: 3px solid transparent;
+                    font-size: 14px;
+                    background-color: inherit;
+                    border-radius: 50px;
+                    font-weight: 600;
+                    color: #212121;
+                    box-shadow: 0 0 0 12px transparent;
+                    cursor: not-allowed;
+                    overflow: hidden;
+                    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+                    margin-bottom: 10px;
+                }
+                
+                .turned-in-button svg {
+                    position: absolute;
+                    width: 20px;
+                    fill: #212121;
+                    z-index: 9;
+                }
+                
+                .turned-in-button .arr-1 {
+                    right: -20%;
+                }
+                
+                .turned-in-button .arr-2 {
+                    left: 12px;
+                }
+                
+                .turned-in-button .circle {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 180px;
+                    height: 100px;
+                    background-color: greenyellow;
+                    border-radius: 50%;
+                    opacity: 1;
+                }
+                
+                .turned-in-button .text {
+                    position: relative;
+                    z-index: 1;
+                    transform: translateX(10px);
+                    color: #212121;
+                }
+                .pagination {
+                            margin-top: 20px;
+                            text-align: center;
+                        }
+                
+                        .pagination a {
+                            margin: 0 5px;
+                            padding: 10px 15px;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                            text-decoration: none;
+                            color: black;
+                        }
+                
+                        .pagination a.active {
+                            background-color: #007bff;
+                            color: white;
+                            border-color: #007bff;
+                        }
+                
+                        .pagination a:hover {
+                            background-color: lightgrey;
+                        }
+                
+                
+                
+                
+                /* Media Query for Extra Small Devices (phones, less than 576px) */
+                @media (max-width: 575.98px) {
+                    .card {
+                    height: auto;
+                    background: #F9F9F9;
+                    border-radius: 10px;
+                    transition: border-radius 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    margin-bottom: 20px;
+                }
+                    .card-title {
+                        font-size: 1.25rem; /* Smaller font size for phones */
+                    }
+                
+                    .project-id {
+                        font-size: 1rem; /* Smaller font size for phones */
+                    }
+                
+                    .card-text {
+                        font-size: 0.9rem; /* Smaller font size for phones */
+                    }
+                
+                    .dates {
+                        flex-direction: column; /* Stack dates vertically */
+                    }
+                
+                    .dates .card-text {
+                        margin-bottom: 10px; /* Adjust spacing */
+                    }
+                
+                    .animated-button {
+                        padding: 8px 16px; /* Smaller padding for buttons */
+                        font-size: 12px; /* Smaller font size for buttons */
+                    }
+                
+                    .animated-button svg {
+                        width: 16px; /* Smaller size of arrows */
+                    }
+                
+                    .animated-button .circle {
+                        width: 14px; /* Smaller circle size */
+                        height: 14px;
+                    }
+                
+                    .animated-button:hover .circle {
+                        width: 150px; /* Adjusted size */
+                        height: 80px;
+                    }
+                }
+                
+                /* Media Query for Small Devices (tablets, 576px to 767.98px) */
+                @media (min-width: 576px) and (max-width: 767.98px) {
+                    .card {
+                    height: 254px;
+                    background: #F9F9F9;
+                    border-radius: 10px;
+                    transition: border-radius 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    margin-bottom: 20px;
+                }
+                    .card-title {
+                        font-size: 1.4rem; /* Adjusted font size for tablets */
+                    }
+                
+                    .project-id {
+                        font-size: 1.05rem; /* Adjusted font size for tablets */
+                    }
+                
+                    .card-text {
+                        font-size: 0.95rem; /* Adjusted font size for tablets */
+                    }
+                
+                    .dates {
+                        flex-direction: column; /* Stack dates vertically */
+                    }
+                
+                    .dates .card-text {
+                        margin-bottom: 10px; /* Adjust spacing */
+                    }
+                
+                    .animated-button {
+                        padding: 10px 20px; /* Adjusted padding for tablets */
+                        font-size: 14px; /* Adjusted font size for tablets */
+                    }
+                
+                    .animated-button svg {
+                        width: 18px; /* Adjusted size of arrows */
+                    }
+                
+                    .animated-button .circle {
+                        width: 16px; /* Adjusted circle size */
+                        height: 16px;
+                    }
+                
+                    .animated-button:hover .circle {
+                        width: 160px; /* Adjusted size */
+                        height: 90px;
+                    }
+                }
+                
+                /* Media Query for Medium Devices (desktops, 768px to 991.98px) */
+                @media (min-width: 768px) and (max-width: 991.98px) {
+                    .card {
+                    height: 254px;
+                    background: #F9F9F9;
+                    border-radius: 10px;
+                    transition: border-radius 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    margin-bottom: 20px;
+                }
+                    .card-title {
+                        font-size: 2.5rem; /* Font size for medium screens */
+                    }
+                
+                    .project-id {
+                        font-size: 1.1rem; /* Font size for medium screens */
+                    }
+                
+                    .card-text {
+                        font-size: 1rem; /* Font size for medium screens */
+                    }
+                
+                    .dates {
+                        flex-direction: row; /* Keep dates horizontal */
+                    }
+                
+                    .dates .card-text {
+                        margin-right: 20px; /* Spacing between dates */
+                        margin-bottom: 0; /* Remove bottom margin */
+                    }
+                
+                    .animated-button {
+                        padding: 10px 24px; /* Padding for medium screens */
+                        font-size: 14px; /* Font size for medium screens */
+                    }
+                
+                    .animated-button svg {
+                        width: 20px; /* Size of arrows */
+                    }
+                
+                    .animated-button .circle {
+                        width: 16px; /* Circle size */
+                        height: 16px;
+                    }
+                
+                    .animated-button:hover .circle {
+                        width: 180px; /* Size of circle on hover */
+                        height: 100px;
+                    }
+                }
+                
+                /* Media Query for Large Devices (larger desktops, 992px and up) */
+                @media (min-width: 992px) {
+                    .card {
+                    height: auto;
+                    background: #F9F9F9;
+                    border-radius: 10px;
+                    transition: border-radius 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    margin-bottom: 20px;
+                }
+                    .card-title {
+                        font-size:1.7rem; /* Font size for large screens */
+                        margin-top: 20px;
+                    }
+                
+                    .project-id {
+                        font-size: 1.2rem; /* Font size for large screens */
+                    }
+                
+                    .card-text {
+                        font-size: 1rem; /* Font size for large screens */
+                    }
+                
+                    .dates {
+                        flex-direction: row; /* Keep dates horizontal */
+                    }
+                
+                    .dates .card-text {
+                        margin-right: 20px; /* Spacing between dates */
+                        margin-bottom: 0; /* Remove bottom margin */
+                    }
+                
+                    .animated-button {
+                        padding: 10px 24px; /* Padding for large screens */
+                        font-size: 14px; /* Font size for large screens */
+                    }
+                
+                    .animated-button svg {
+                        width: 20px; /* Size of arrows */
+                    }
+                
+                    .animated-button .circle {
+                        width: 16px; /* Circle size */
+                        height: 16px;
+                    }
+                
+                    .animated-button:hover .circle {
+                        width: 180px; /* Size of circle on hover */
+                        height: 100px;
+                    }
+                }

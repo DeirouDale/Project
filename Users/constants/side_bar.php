@@ -25,7 +25,7 @@
                     <span class="text">Dashboard</span>
                 </a>
             </li>
-            <li class="<?= $current_page == 'Tables.php' ? 'active' : '' ?>">
+            <li class="<?= in_array($current_page, ['Tables.php', 'Table_1.php', 'Table_2.php', /* Add all table files here */ 'Table_36.php']) ? 'active' : '' ?>">
                 <a href="Tables.php">
                     <i class='bx bxs-check-square'></i>
                     <span class="text">Tables</span>

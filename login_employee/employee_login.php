@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Log in to the SGOD Batac Portal.">
     <title>SDO Batac LRMS</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="Img/icon.png" type="image/icon type">
+    <link rel="icon" href="../Img/icon.png" type="image/icon type">
 </head>
 <body>
     <div class="container">
@@ -16,7 +16,7 @@
             <div class="box-login" id="login">
                 <div class="top-header">
                     <div class="image">
-                        <img class="logo-img" src="Img/sdologo.png" alt="SGOD Batac Logo">
+                        <img class="logo-img" src="../Img/sdologo.png" alt="SGOD Batac Logo">
                     </div>
                     <h3>Log In</h3>
                     <small>Welcome to SGOD Batac Portal!</small>
@@ -27,7 +27,7 @@
                     </div>
                 <?php endif; ?>
                 <div class="input">
-                    <form method="POST" action="login_process.php">
+                    <form method="POST" action="emp_login_process.php">
                         <div class="input_field">
                             <input type="text" class="emp-input" id="studentNum" name="school_id" required>
                             <label for="studentNum">Employee ID</label> 
@@ -58,13 +58,17 @@
             <div class="box-register" id="register" style="display:none;">
                 <div class="top-header">
                     <div class="image">
-                        <img class="logo-img" src="Img/sdologo.png" alt="SGOD Batac Logo">
+                        <img class="logo-img" src="../Img/sdologo.png" alt="SGOD Batac Logo">
                     </div>
                     <h3>Register</h3>
                     <small>Join the SGOD Batac Portal!</small>
                 </div>
                 <div class="input">
-                    <form method="POST" action="register_process.php">
+                    <form method="POST" action="emp_register_process.php">
+                        <div class="input_field">
+                            <input type="text" class="emp-input" id="regName" name="name" required>
+                            <label for="name">Name</label> 
+                        </div>
                         <div class="input_field">
                             <input type="text" class="emp-input" id="regSchoolId" name="school_id" required>
                             <label for="regSchoolId">Employee ID</label> 
@@ -91,13 +95,13 @@
             <div class="box-forgot-password" id="forgot-password" style="display:none;">
                 <div class="top-header">
                     <div class="image">
-                        <img class="logo-img" src="Img/sdologo.png" alt="SGOD Batac Logo">
+                        <img class="logo-img" src="../Img/sdologo.png" alt="SGOD Batac Logo">
                     </div>
                     <h3>Forgot Password</h3>
                     <small>Reset your SGOD Batac Portal password.</small>
                 </div>
                 <div class="input">
-                    <form method="POST" action="forgot_password_process.php">
+                    <form method="POST" action="emp_forgot_password_process.php">
                         <div class="input_field">
                             <input type="text" class="emp-input" id="forgotEmailOrId" name="email_or_school_id" required>
                             <label for="forgotEmailOrId">Email or School ID</label> 

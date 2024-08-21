@@ -1,26 +1,71 @@
 <?php
 include("../connection.php");
-$employeeQuery = "SELECT id, name FROM employees";
-$employeeResult = $conn->query($employeeQuery);
 
-// Check for query success
-if (!$employeeResult) {
-    die("Error fetching employee data: " . $conn->error);
+// Fetch counts for not started and in-progress tasks
+$notStartedQuery = "SELECT COUNT(*) AS count FROM employee_tasks WHERE status = 1";
+$notStartedResult = $conn->query($notStartedQuery);
+$notStartedCount = $notStartedResult->fetch_assoc()['count'];
+
+$inProgressQuery = "SELECT COUNT(*) AS count FROM employee_tasks WHERE status = 2";
+$inProgressResult = $conn->query($inProgressQuery);
+$inProgressCount = $inProgressResult->fetch_assoc()['count'];
+
+// Number of items per page
+$itemsPerPage = 2;
+
+// Pagination for Assign Tasks
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$page = ($page <= 0) ? 1 : $page;
+$selectedEmployee = isset($_GET['employee']) ? $conn->real_escape_string($_GET['employee']) : '';
+$offset = ($page - 1) * $itemsPerPage;
+
+$assignTasksQuery = "SELECT * FROM employee_tasks WHERE status = 1";
+if ($selectedEmployee) {
+    $assignTasksQuery .= " AND employee_name = '$selectedEmployee'";
+}
+$assignTasksQuery .= " LIMIT $itemsPerPage OFFSET $offset";
+$assignTasksResult = $conn->query($assignTasksQuery);
+
+if (!$assignTasksResult) {
+    die("Error fetching assign tasks data: " . $conn->error);
 }
 
-// Fetch task details if an ID is provided
-$taskId = isset($_GET['id']) ? intval($_GET['id']) : 0;
-$task = null;
-if ($taskId > 0) {
-    $taskQuery = "SELECT * FROM employee_tasks WHERE id = $taskId";
-    $taskResult = $conn->query($taskQuery);
-    if ($taskResult && $taskResult->num_rows > 0) {
-        $task = $taskResult->fetch_assoc();
-    } else {
-        die("Task not found.");
-    }
+$totalAssignTasksQuery = "SELECT COUNT(*) AS total FROM employee_tasks WHERE status = 1";
+if ($selectedEmployee) {
+    $totalAssignTasksQuery .= " AND employee_name = '$selectedEmployee'";
 }
+$totalAssignTasksResult = $conn->query($totalAssignTasksQuery);
+$totalAssignTasksRow = $totalAssignTasksResult->fetch_assoc();
+$totalAssignTasks = $totalAssignTasksRow['total'];
+$totalAssignPages = ceil($totalAssignTasks / $itemsPerPage);
+
+// Pagination for Completed Tasks
+$pageCompleted = isset($_GET['page_completed']) ? intval($_GET['page_completed']) : 1;
+$pageCompleted = ($pageCompleted <= 0) ? 1 : $pageCompleted;
+$selectedEmployeeCompleted = isset($_GET['employee_completed']) ? $conn->real_escape_string($_GET['employee_completed']) : '';
+$offsetCompleted = ($pageCompleted - 1) * $itemsPerPage;
+
+$completedTasksQuery = "SELECT * FROM employee_tasks WHERE status = 2";
+if ($selectedEmployeeCompleted) {
+    $completedTasksQuery .= " AND employee_name = '$selectedEmployeeCompleted'";
+}
+$completedTasksQuery .= " LIMIT $itemsPerPage OFFSET $offsetCompleted";
+$completedTasksResult = $conn->query($completedTasksQuery);
+
+if (!$completedTasksResult) {
+    die("Error fetching completed tasks data: " . $conn->error);
+}
+
+$totalCompletedTasksQuery = "SELECT COUNT(*) AS total FROM employee_tasks WHERE status = 2";
+if ($selectedEmployeeCompleted) {
+    $totalCompletedTasksQuery .= " AND employee_name = '$selectedEmployeeCompleted'";
+}
+$totalCompletedTasksResult = $conn->query($totalCompletedTasksQuery);
+$totalCompletedTasksRow = $totalCompletedTasksResult->fetch_assoc();
+$totalCompletedTasks = $totalCompletedTasksRow['total'];
+$totalCompletedPages = ceil($totalCompletedTasks / $itemsPerPage);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,99 +76,9 @@ if ($taskId > 0) {
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <?php include("../Admin/constants/style.php"); ?>
-    <style>
-        /* Table Styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #f9f9f9; /* Light background for better readability */
-        }
-
-        table th, table td {
-            border: 1px solid #ddd; /* Light grey border */
-            padding: 12px 15px; /* Increased padding for better readability */
-            text-align: left;
-        }
-
-        table th {
-            background: #0d3c5c; /* Dark blue background */
-            color: white;
-            font-weight: bold; /* Emphasize headers */
-            text-align: center; /* Center-align headers */
-        }
-
-        table td {
-            background: #ffffff; /* White background for table cells */
-            color: #333; /* Darker text for contrast */
-        }
-
-        table tr:nth-child(even) td {
-            background: #f1f1f1; /* Light grey background for even rows */
-        }
-
-        table tr:hover td {
-            background: #e0e0e0; /* Light grey background on hover */
-        }
-
-        table th, table td {
-            border-radius: 4px; /* Rounded corners for cells */
-        }
-        /* Add this to your existing CSS file or within a <style> tag */
-        .description-column {
-            width: 300px; /* Adjust the width as needed */
-            word-wrap: break-word; /* Ensure text wraps within the cell */
-        }
-        /* Chart Container Styles */
-        .chart-container {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            flex: 1; /* Make charts flexibly fill the row */
-            margin-right: 20px; /* Add space between graphs */
-        }
-
-        .chart-container:last-child {
-            margin-right: 0; /* Remove right margin from the last chart container */
-        }
-
-        h2 {
-            font-weight: bold;
-            color: var(--dark-blue);
-        }
-
-        .container h2 {
-            margin-bottom: 20px;
-        }
-
-        /* Status Overview Styles */
-        .status-overview .card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-
-        /* Flexbox for Graphs */
-        .graph-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        /* Ensure responsive behavior */
-        @media (max-width: 768px) {
-            .graph-row {
-                flex-direction: column;
-            }
-
-            .chart-container {
-                margin-right: 0; /* Remove right margin on smaller screens */
-                margin-bottom: 20px; /* Add bottom margin for vertical spacing on smaller screens */
-            }
-        }
-    </style>
+   
 </head>
 <body>
 
@@ -139,81 +94,194 @@ if ($taskId > 0) {
     <main>
         <div class="head-title">
             <div class="left">
-                <h1>Assign Tasks<hr>
+                <h1>Tasks<hr>
             </div>
-            <div class="d-flex justify-content-between align-items-center">
-                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#addDocumentModal">Assign Task</a>
-                <button id="export-button" class="btn btn-secondary">Export to Excel</button>
+            <ul class="box-info-4">
+                    <li>
+                        <i class='bx bxs-check-square'></i>
+                        <span class="text">
+                            <h3><?php echo $notStartedCount; ?></h3>
+                            <p>Pending Tasks</p>
+                        </span>
+                    </li>
+                    <li>
+                        <i class='bx bxs-user-check'></i>
+                        <span class="text">
+                            <h3><?php echo $inProgressCount; ?></h3>
+                            <p>Completed Tasks</p>
+                        </span>
+                    </li>
+                </ul>
+                <div class="table-container">
+        <h2>Assign Tasks</h2>
+        <hr>
+                        <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#addDocumentModal">Assign Task</a>
+                        <button id="export-button" class="btn btn-secondary">Export to Excel</button>
+                    <hr>
+                <form method="get" class="form-inline mb-3">
+            <div class="form-group">
+                <label for="employeeFilter" class="mr-2">Filter by Employee:</label>
+                <select class="form-control" id="employeeFilter" name="employee">
+                    <option value="">All Employees</option>
+                    <?php
+                    $employeeResult = $conn->query("SELECT DISTINCT employee_name FROM employee_tasks WHERE status = 1");
+                    while ($row = $employeeResult->fetch_assoc()) {
+                        $selected = ($row['employee_name'] == $selectedEmployee) ? 'selected' : '';
+                        echo '<option value="' . htmlspecialchars($row['employee_name']) . '" ' . $selected . '>' . htmlspecialchars($row['employee_name']) . '</option>';
+                    }
+                    ?>
+                </select>
+                <button type="submit" class="btn btn-primary ml-2">Filter</button>
             </div>
-            <div class="container mt-4">
-            </div>
+        </form>
+        <div style="overflow-x: auto; width: 100%;">
             <table>
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>Task #</th>
                         <th class="description-column">Description</th>
                         <th>Employee Name</th>
                         <th>Date Assigned</th>
                         <th>Deadline</th>
                         <th>Status</th>
-                        <th>Document</th> <!-- New column header -->
+                        <th>Document</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                        <?php
-                        include("../connection.php");
-                        // Fetch employee tasks from the database
-                        $query = "SELECT * FROM employee_tasks";
-                        $result = mysqli_query($conn, $query);
-
-                        if ($result && mysqli_num_rows($result) > 0) {
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($row['id']) . "</td>";
-                                echo "<td class='description-column'>" . htmlspecialchars($row['description']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['employee_name']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['date_assigned']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['deadline']) . "</td>";
-                                echo "<td>";
-                                if ($row['status'] == 1) {
-                                    echo "Not Started";
-                                } elseif ($row['status'] == 2) {
-                                    echo "In Progress";
-                                } elseif ($row['status'] == 3) {
-                                    echo "Pending";
-                                } else {
-                                    echo "Unknown Status"; // In case status is not 1, 2, or 3
-                                }
-                                echo "</td>";
-                                echo "<td>";
-                                if (!empty($row['file_name'])) {
-                                    echo '<a href="../../Project/Task_Files/' . htmlspecialchars($row['file_name']) . '" class="btn btn-info btn-sm" target="_blank">View File</a>';
-                                } else {
-                                    echo "No File";
-                                }
-                                echo "</td>";
-                                echo '<td>
-                                        <a href="#" class="btn btn-warning btn-sm edit-btn" 
-                                        data-id="' . htmlspecialchars($row['id']) . '"
-                                        data-name="' . htmlspecialchars($row['employee_name']) . '"
-                                        data-description="' . htmlspecialchars($row['description']) . '"
-                                        data-date-assigned="' . htmlspecialchars($row['date_assigned']) . '"
-                                        data-deadline="' . htmlspecialchars($row['deadline']) . '"
-                                        data-status="' . htmlspecialchars($row['status']) . '"
-                                        data-file="' . htmlspecialchars($row['file_name']) . '"
-                                        data-toggle="modal" data-target="#editDocumentModal">Edit</a>
-                                        <a href="tasks/remove_tasks.php?id=' . htmlspecialchars($row['id']) . '" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#removeDocumentModal">Remove</a>
-                                    </td>';
-                                echo "</tr>";
+                    <?php
+                    if ($assignTasksResult && $assignTasksResult->num_rows > 0) {
+                        while ($row = $assignTasksResult->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['id']) . "</td>";
+                            echo "<td class='description-column'>" . htmlspecialchars($row['description']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['employee_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['date_assigned']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['deadline']) . "</td>";
+                            echo "<td>";
+                            if ($row['status'] == 1) {
+                                echo "Pending";
+                            } elseif ($row['status'] == 2) {
+                                echo "Completed";
+                            } else {
+                                echo "Unknown Status";
                             }
-                        } else {
-                            echo "<tr><td colspan='8'>No tasks found.</td></tr>";
+                            echo "</td>";
+                            echo "<td>";
+                            if (!empty($row['file_name'])) {
+                                echo '<a href="../../Project/Task_Files/' . htmlspecialchars($row['file_name']) . '" class="btn btn-info btn-sm" target="_blank">View File</a>';
+                            } else {
+                                echo "No File";
+                            }
+                            echo "</td>";
+                            echo '<td>
+                                    <a href="#" class="btn btn-warning btn-sm edit-btn" 
+                                    data-id="' . htmlspecialchars($row['id']) . '"
+                                    data-name="' . htmlspecialchars($row['employee_name']) . '"
+                                    data-description="' . htmlspecialchars($row['description']) . '"
+                                    data-date-assigned="' . htmlspecialchars($row['date_assigned']) . '"
+                                    data-deadline="' . htmlspecialchars($row['deadline']) . '"
+                                    data-status="' . htmlspecialchars($row['status']) . '"
+                                    data-file="' . htmlspecialchars($row['file_name']) . '"
+                                    data-toggle="modal" data-target="#editDocumentModal">Edit</a>
+                                    <a href="tasks/remove_tasks.php?id=' . htmlspecialchars($row['id']) . '" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#removeDocumentModal">Remove</a>
+                                </td>';
+                            echo "</tr>";
                         }
-                        ?>
-                    </tbody>
+                    } else {
+                        echo "<tr><td colspan='8'>No tasks found.</td></tr>";
+                    }
+                    ?>
+                </tbody>
             </table>
         </div>
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a href="?page=<?php echo $page - 1; ?>&employee=<?php echo urlencode($selectedEmployee); ?>">&laquo; Previous</a>
+            <?php endif; ?>
+            <?php for ($i = 1; $i <= $totalAssignPages; $i++): ?>
+                <a href="?page=<?php echo $i; ?>&employee=<?php echo urlencode($selectedEmployee); ?>" class="<?php echo ($i == $page) ? 'active' : ''; ?>"><?php echo $i; ?></a>
+            <?php endfor; ?>
+            <?php if ($page < $totalAssignPages): ?>
+                <a href="?page=<?php echo $page + 1; ?>&employee=<?php echo urlencode($selectedEmployee); ?>">Next &raquo;</a>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Completed Tasks Table -->
+    <div class="table-container" style="margin-top: 20px;">
+        <h2>Completed Task</h2>
+        <hr>
+        <!-- Employee Filter for Completed Tasks -->
+        <form method="get" class="form-inline mb-3">
+            <div class="form-group">
+                <label for="employeeFilterCompleted" class="mr-2">Filter by Employee:</label>
+                <select class="form-control" id="employeeFilterCompleted" name="employee_completed">
+                    <option value="">All Employees</option>
+                    <?php
+                    $employeeResult = $conn->query("SELECT DISTINCT employee_name FROM employee_tasks WHERE status = 2");
+                    while ($row = $employeeResult->fetch_assoc()) {
+                        $selected = ($row['employee_name'] == $selectedEmployeeCompleted) ? 'selected' : '';
+                        echo '<option value="' . htmlspecialchars($row['employee_name']) . '" ' . $selected . '>' . htmlspecialchars($row['employee_name']) . '</option>';
+                    }
+                    ?>
+                </select>
+                <button type="submit" class="btn btn-primary ml-2">Filter</button>
+            </div>
+        </form>
+        <div style="overflow-x: auto; width: 100%;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task #</th>
+                        <th class="description-column">Description</th>
+                        <th>Employee Name</th>
+                        <th>Submitted on</th>
+                        <th>Document</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($completedTasksResult && $completedTasksResult->num_rows > 0) {
+                        while ($row = $completedTasksResult->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['id']) . "</td>";
+                            echo "<td class='description-column'>" . htmlspecialchars($row['description']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['employee_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['date_completed']) . "</td>";
+                            echo "<td>";
+                            if (!empty($row['file_name'])) {
+                                echo '<a href="../../Project/Task_Files/' . htmlspecialchars($row['file_name']) . '" class="btn btn-info btn-sm" target="_blank">View File</a>';
+                            } else {
+                                echo "No File";
+                            }
+                            echo "</td>";
+                            echo '<td>
+                                <a href="tasks/return_task.php?id=' . htmlspecialchars($row['id']) . '" class="btn btn-warning btn-sm">Return</a>
+                                <a href="tasks/remove_tasks.php?id=' . htmlspecialchars($row['id']) . '" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#removeDocumentModal">Remove</a>
+                            </td>';
+                        }
+                    } else {
+                        echo "<tr><td colspan='8'>No tasks found.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <?php if ($pageCompleted > 1): ?>
+                <a href="?page_completed=<?php echo $pageCompleted - 1; ?>&employee_completed=<?php echo urlencode($selectedEmployeeCompleted); ?>">&laquo; Previous</a>
+            <?php endif; ?>
+            <?php for ($i = 1; $i <= $totalCompletedPages; $i++): ?>
+                <a href="?page_completed=<?php echo $i; ?>&employee_completed=<?php echo urlencode($selectedEmployeeCompleted); ?>" class="<?php echo ($i == $pageCompleted) ? 'active' : ''; ?>"><?php echo $i; ?></a>
+            <?php endfor; ?>
+            <?php if ($pageCompleted < $totalCompletedPages): ?>
+                <a href="?page_completed=<?php echo $pageCompleted + 1; ?>&employee_completed=<?php echo urlencode($selectedEmployeeCompleted); ?>">Next &raquo;</a>
+            <?php endif; ?>
+        </div>
+    </div>
+
     </main>
     <!-- MAIN -->
 </section>
@@ -238,11 +306,12 @@ if ($taskId > 0) {
             <select class="form-control" id="employeeName" name="employee_name" required>
                 <option value="" disabled selected>Select an employee</option>
                 <?php
-                // Output options for the dropdown
-                while ($row = $employeeResult->fetch_assoc()) {
-                    echo '<option value="' . htmlspecialchars($row['name']) . '">' . htmlspecialchars($row['name']) . '</option>';
-                }
-                ?>
+                            // Fetch employees to populate the select dropdown
+                            $employeeResult = $conn->query("SELECT id, name FROM employees");
+                            while ($row = $employeeResult->fetch_assoc()) {
+                                echo '<option value="' . htmlspecialchars($row['name']) . '">' . htmlspecialchars($row['name']) . '</option>';
+                            }
+                            ?>
             </select>
         </div>
         <div class="form-group">
@@ -316,9 +385,8 @@ if ($taskId > 0) {
                     <div class="form-group">
                         <label for="editStatus">Status</label>
                         <select class="form-control" id="editStatus" name="status" required>
-                            <option value="1">Not Started</option>
-                            <option value="2">In Progress</option>
-                            <option value="3">Pending</option>
+                            <option value="1">Pending</option>
+                            <option value="2">Completed</option>
                         </select>
                     </div>
                     <div class="form-group">

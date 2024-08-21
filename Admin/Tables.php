@@ -3,8 +3,6 @@ include("../connection.php");
 session_start();
 date_default_timezone_set('Asia/Manila'); // Set the timezone
 
-// Retrieve the school_id from the session if it exists
-$school_id = isset($_SESSION['school_id']) ? $_SESSION['school_id'] : 'Not logged in';
 
 // Fetch table data from the database
 $query = "SELECT table_no, table_name FROM list_of_tables ORDER BY table_no";

@@ -1,5 +1,5 @@
 <?php
-include("connection.php"); // Adjust path as necessary
+include("../connection.php"); // Adjust path as necessary
 
 // Check if the form data is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

@@ -25,7 +25,7 @@
             </a>
         </li>
         <li class="<?= $current_page == 'Tasks.php' ? 'active' : '' ?>">
-            <a href="DocumentTracking.php">
+            <a href="Tasks.php">
                 <i class='bx bx-file'></i>
                 <span class="text">Tasks</span>
             </a>
@@ -55,7 +55,7 @@
     <ul class="side-menu">
         <li class="menu-label">Settings</li>
         <li>
-            <a href="../logout.php" class="logout">
+            <a href="../login_employee/emp_logout.php" class="logout">
                 <i class='bx bx-log-out'></i>
                 <span class="text">Logout</span>
             </a>

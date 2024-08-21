@@ -13,3 +13,4 @@
 <link rel="stylesheet" href="../styles/tables.css">
 <link rel="stylesheet" href="../styles/popup.css">
 <link rel="stylesheet" href="../styles/school_info.css">
+<link rel="stylesheet" href="../styles/admin_tasks.css">
